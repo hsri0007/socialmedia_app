@@ -4,12 +4,24 @@ const jwt = require("jsonwebtoken");
 const Bcrypt = require("bcryptjs");
 const Joi = require("joi");
 const UserModel = require("../../models/userModel");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 const schema = Joi.object({
   email: Joi.string().email({
     minDomainSegments: 2,
     tlds: { allow: ["com", "net"] },
   }),
+});
+
+router.get("/", authMiddleware, async (req, res) => {
+  const { user } = req;
+  try {
+    const usesdata = await UserModel.findById(user);
+    const usesdataFollowers = await UserModel.findOne({ user });
+    res.send({ usesdata, usesdataFollowers });
+  } catch (error) {
+    res.status(500).send("error");
+  }
 });
 
 router.post("/", async (req, res) => {

@@ -41,7 +41,7 @@ router.post("/", async (req, res) => {
     });
     let user = await UserModel.findOne({ email: email });
     // res.send("user");
-    if (user) res.status(401).send("email already exit");
+    if (user) res.status(400).send("email already exit");
     let userdata = new UserModel(req.body);
     userdata.password = await Bcrypt.hash(password, 10);
     userdata.profilePicUrl = "";
